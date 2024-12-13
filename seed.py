@@ -40,7 +40,7 @@ def generate_fake_data(number_users, number_tasks) -> tuple():
 # print(task_names)
 # print(task_descriptions)
 
-statuses = [("new",), ("in progress",), ("completed",)]
+statuses = ["new", "in progress", "completed"]
 
 
 def prepare_data(users, emails, task_names, task_descriptions) -> tuple():
@@ -107,12 +107,12 @@ def insert_data_to_db(users, tasks, status) -> None:
 
         cur.executemany(sql_to_tasks, tasks)
 
-        # Останньою заповнюємо таблицю із зарплатами
+        # Останньою заповнюємо таблицю із статусами
 
-        sql_to_status = """INSERT INTO name
+        sql_to_status = """INSERT INTO status(name)
                               VALUES (?)"""
 
-        # Вставляємо дані про зарплати
+        # Вставляємо дані про статус
 
         cur.executemany(sql_to_status, status)
 
