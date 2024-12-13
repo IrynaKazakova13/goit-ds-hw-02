@@ -57,10 +57,10 @@ def prepare_data(users, emails, task_names, task_descriptions) -> tuple():
     for task in task_names:
         for_tasks.append(
             (
-                choice(task_names),
-                choice(task_descriptions),
-                choice(statuses),
+                fake_data.sentence(nb_words=5),
+                fake_data.text(max_nb_chars=100),
                 randint(1, NUMBER_USERS),
+                randint(1, NUMBER_STATUS),
             )
         )
 

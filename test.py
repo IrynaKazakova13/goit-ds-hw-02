@@ -5,7 +5,7 @@ import sqlite3
 
 NUMBER_USERS = 10
 NUMBER_TASKS = 5
-# NUMBER_STATUS = 3
+NUMBER_STATUS = 3
 
 
 def generate_fake_data(number_users, number_tasks) -> tuple():
@@ -40,7 +40,7 @@ def generate_fake_data(number_users, number_tasks) -> tuple():
 # print(task_names)
 # print(task_descriptions)
 
-statuses = [("new",), ("in progress",), ("completed",)]
+statuses = ["new", "in progress", "completed"]
 
 
 def prepare_data(users, emails, task_names, task_descriptions) -> tuple():
@@ -57,10 +57,12 @@ def prepare_data(users, emails, task_names, task_descriptions) -> tuple():
     for task in task_names:
         for_tasks.append(
             (
-                choice(task_names),
-                choice(task_descriptions),
-                choice(statuses),
+                fake_data.sentence(nb_words=5),
+                fake_data.text(max_nb_chars=100),
+                # choice(task_names),
+                # choice(task_descriptions),
                 randint(1, NUMBER_USERS),
+                randint(1, NUMBER_STATUS),
             )
         )
 
