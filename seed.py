@@ -3,8 +3,8 @@ import faker
 from random import randint, choice
 import sqlite3
 
-NUMBER_USERS = 10
-NUMBER_TASKS = 5
+NUMBER_USERS = 500
+NUMBER_TASKS = 50
 NUMBER_STATUS = 3
 
 
@@ -14,7 +14,6 @@ def generate_fake_data(number_users, number_tasks) -> tuple():
     fake_task_names = []  # тут зберігатимемо name задачі
     fake_task_description = []  # тут зберігатимемо description задачі
 
-    """Візьмемо 300 юзерів з faker і помістимо їх у потрібну змінну"""
     fake_data = faker.Faker()
 
     # Створимо набір юзерів та emails у кількості number_users
@@ -27,78 +26,56 @@ def generate_fake_data(number_users, number_tasks) -> tuple():
         fake_task_names.append(fake_data.sentence(nb_words=5))
         fake_task_description.append(fake_data.text(max_nb_chars=100))
 
-    # fake_status = [("new",), ("in progress",), ("completed",)]
-
     return fake_users, fake_emails, fake_task_names, fake_task_description
 
 
 # users, emails, task_names, task_descriptions = generate_fake_data(
 # NUMBER_USERS, NUMBER_TASKS
 # )
-# print(users)
-# print(emails)
-# print(task_names)
-# print(task_descriptions)
-
-statuses = ["new", "in progress", "completed"]
 
 
 def prepare_data(users, emails, task_names, task_descriptions) -> tuple():
-    for_users = []
-    # готуємо список кортежів - імен юзерів
-    # id INTEGER PRIMARY KEY AUTOINCREMENT, fullname VARCHAR(100), email VARCHAR(100) UNIQUE NOT NULL
+    for_users = [] # готуємо список кортежів - імен юзерів
     fake_data = faker.Faker()
     for user in users:
         for_users.append((user, fake_data.email()))
 
-    for_tasks = []
-    # для таблиці задач
-    # id INTEGER PRIMARY KEY AUTOINCREMENT, title VARCHAR(100), description TEXT, status_id INTEGER, user_id INTEGER
+    for_tasks = [] # для таблиці задач
     for task in task_names:
         for_tasks.append(
             (
                 fake_data.sentence(nb_words=5),
                 fake_data.text(max_nb_chars=100),
-                randint(1, NUMBER_USERS),
                 randint(1, NUMBER_STATUS),
+                randint(1, NUMBER_USERS),
             )
         )
 
-    for_status = []
-    # для таблиці статусів
-    # id INTEGER PRIMARY KEY AUTOINCREMENT, name VARCHAR(50) UNIQUE NOT NULL
-    for status_name in statuses:
-        for_status.append((status_name))
-
+    for_status = [  # для таблиці статусів
+        ("new",),
+        ("in progress",),
+        ("completed",),
+    ]
     return for_users, for_tasks, for_status
-
 
 # users, tasks, status = prepare_data(*generate_fake_data(NUMBER_USERS, NUMBER_TASKS))
 
-# print(users)
-# print(tasks)
-# print(status)
-
-
 def insert_data_to_db(users, tasks, status) -> None:
     # Створимо з'єднання з нашою БД та отримаємо об'єкт курсора для маніпуляцій з даними
-
     with sqlite3.connect("tables.db") as con:
 
         cur = con.cursor()
 
-        """Заповнюємо таблицю users. І створюємо скрипт для вставлення, де змінні, які вставлятимемо, помітимо
-        знаком заповнювача (?) """
+        # Заповнюємо таблицю users.
 
         sql_to_users = """INSERT INTO users(fullname, email)
                                VALUES (?, ?)"""
 
-        """Для вставлення відразу всіх даних скористаємося методом executemany курсора. Першим параметром буде текст
-        скрипту, а другим - дані (список кортежів)."""
+        # Для вставлення відразу всіх даних скористаємося методом executemany курсора. Першим параметром буде текст скрипту, а другим - дані (список кортежів).
 
         cur.executemany(sql_to_users, users)
 
-        # Далі вставляємо дані про tasks. Напишемо для нього скрипт і вкажемо змінні
+        # Далі вставляємо дані про tasks.
 
         sql_to_tasks = """INSERT INTO tasks(title, description, status_id, user_id)
                                VALUES (?, ?, ?, ?)"""

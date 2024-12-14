@@ -26,7 +26,10 @@ CREATE TABLE tasks (
       ON DELETE CASCADE
 );
 
-INSERT INTO users (id, fullname, email)
-VALUES (1, 'Boris', 'boris@test.com'),
-(2, 'Alina', 'alina@test.com'),
-(3, 'Maksim', 'maksim@test.com');
+-- INSERT INTO users (id, fullname, email)
+-- VALUES (1, 'Boris', 'boris@test.com'),
+-- (2, 'Alina', 'alina@test.com'),
+-- (3, 'Maksim', 'maksim@test.com');
+
+-- INSERT INTO status (name)
+-- VALUES ('new'), ('in progress'), ('completed');
